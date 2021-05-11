@@ -1,3 +1,5 @@
+package com.delivery.producer;
+
 import com.example.payment.dto.PaymentJsonDTO;
 import com.example.payment.enums.PaymentType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,11 +10,16 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Properties;
 
+@SpringBootApplication
 public class ProducerApplication {
     public static void main(String[] args) throws JsonProcessingException {
+        SpringApplication.run(ProducerApplication.class, args);
+
         //Creating Properties
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:29092");
@@ -50,28 +57,5 @@ public class ProducerApplication {
         producer.flush();
         producer.commitTransaction();
         producer.close();
-
-
     }
-
-//    public static void main(String[] args) {
-//        Properties properties = new Properties();
-//        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:29092");
-//        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "payment");
-//        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-//        Consumer<String, String> consumer = new KafkaConsumer<>(properties);
-//        //subscribe to topic
-//        consumer.subscribe(Collections.singleton("offline"));
-//        //poll the record from the topic
-//        while (true) {
-//            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-//            for (ConsumerRecord<String, String> record : records) {
-//                System.out.println("Message received: " + record.value());
-//            }
-//            consumer.commitAsync();
-//        }
-//    }
 }
