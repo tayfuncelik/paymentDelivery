@@ -9,4 +9,12 @@ public class ErrorJsonDTO {
     private String paymentId;
     private String error;
     private String errorDescription;
+
+    public static ErrorJsonDTO toModel(String id, String err, String desc) {
+        ErrorJsonDTO dto = new ErrorJsonDTO();
+        dto.setPaymentId(id);
+        dto.setError(err);
+        dto.setErrorDescription(desc);
+        return dto;
+    }
 }

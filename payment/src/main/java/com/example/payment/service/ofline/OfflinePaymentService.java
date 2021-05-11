@@ -1,4 +1,4 @@
-package com.example.payment.service.payment.ofline;
+package com.example.payment.service.ofline;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

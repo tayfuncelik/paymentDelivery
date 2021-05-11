@@ -33,8 +33,6 @@ public class PaymentMapper {
 
     public Payment mapPaymentJsonToPayment(PaymentJsonDTO paymentJsonDTO) {
         Payment payment = new Payment();
-
-        payment.setPaymentId(paymentJsonDTO.getPaymentId());
         payment.setAccount(getAccount(paymentJsonDTO));
         payment.setPaymentType(paymentJsonDTO.getPaymentType());
         payment.setCreditCard(paymentJsonDTO.getCreditCard());

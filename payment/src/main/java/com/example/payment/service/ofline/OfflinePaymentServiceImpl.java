@@ -1,4 +1,4 @@
-package com.example.payment.service.payment.ofline;
+package com.example.payment.service.ofline;
 
 import com.example.payment.dto.ErrorJsonDTO;
 import com.example.payment.enums.ErrorType;
@@ -35,10 +35,18 @@ public class OfflinePaymentServiceImpl implements OfflinePaymentService {
 
     @Override
     @KafkaListener(topics = OFFLINE_TOPIC, groupId = GROUP_ID)
-    public void makeOfflinePayment(String message) throws JsonProcessingException, URISyntaxException {
-        Payment payment = paymentMapper.mapPaymentMessageToPayment(message);
-        paymentRepository.save(payment);
-        updateAccount(payment);
+    public void makeOfflinePayment(String message) throws URISyntaxException {
+        Payment payment = null;
+        try {
+            payment = paymentMapper.mapPaymentMessageToPayment(message);
+        } catch (Exception e) {
+            errorLogService.errorLog(ErrorJsonDTO.toModel(null,ErrorType.OTHER.getErrorType(),
+                    "Message is not the correct form"));
+        }
+        if (payment != null) {
+            paymentRepository.save(payment);
+            updateAccount(payment);
+        }
     }
 
     private void updateAccount(Payment payment) throws URISyntaxException {
@@ -53,11 +61,8 @@ public class OfflinePaymentServiceImpl implements OfflinePaymentService {
             accountRepository.save(account);
             accountRepository.findById(account.getAccountId());
         } else {
-            ErrorJsonDTO dto = new ErrorJsonDTO();
-            dto.setPaymentId(payment.getPaymentId());
-            dto.setError(ErrorType.NETWORK.getErrorType());
-            dto.setErrorDescription("There is no account related with payment");
-            errorLogService.errorLog(dto);
+            errorLogService.errorLog(ErrorJsonDTO.toModel(payment.getPaymentId(),ErrorType.NETWORK.getErrorType(),
+                    "There is no account related with payment"));
         }
     }
 

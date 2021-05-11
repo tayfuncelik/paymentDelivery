@@ -1,4 +1,4 @@
-package com.example.payment.service.payment.online;
+package com.example.payment.service.online;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -2,6 +2,7 @@ package com.example.payment.external;
 
 import com.example.payment.dto.PaymentJsonDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,10 +17,14 @@ import java.net.URISyntaxException;
 @AllArgsConstructor
 public class PaymentGateAwayService {
 
-    @Value("${external.payment.gateaway}")
     private static String url;
-
     private final WebClient webClient;
+
+    @Autowired
+    public PaymentGateAwayService(@Value("${external.payment.gateaway}") String url, WebClient webClient) {
+        this.url = url;
+        this.webClient = webClient;
+    }
 
     public HttpStatus validatePayment(PaymentJsonDTO dto) throws URISyntaxException {
         return webClient
@@ -31,4 +36,6 @@ public class PaymentGateAwayService {
                 .blockOptional()
                 .get();
     }
+
+
 }

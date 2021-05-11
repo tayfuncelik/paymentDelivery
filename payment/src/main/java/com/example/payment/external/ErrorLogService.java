@@ -2,6 +2,7 @@ package com.example.payment.external;
 
 import com.example.payment.dto.ErrorJsonDTO;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -14,9 +15,14 @@ import java.net.URISyntaxException;
 @AllArgsConstructor
 public class ErrorLogService {
 
-    @Value("${external.error.log.url}")
     private static String url;
     private final WebClient webClient;
+
+    @Autowired
+    public ErrorLogService(@Value("${external.error.log.url}") String url, WebClient webClient) {
+        this.url = url;
+        this.webClient = webClient;
+    }
 
     public void errorLog(ErrorJsonDTO dto) throws URISyntaxException {
         webClient.post()

@@ -1,4 +1,4 @@
-package com.example.payment.service.payment.online;
+package com.example.payment.service.online;
 
 import com.example.payment.dto.ErrorJsonDTO;
 import com.example.payment.dto.PaymentJsonDTO;
@@ -24,11 +24,12 @@ public class OnlinePaymentServiceImpl implements OnlinePaymentService {
     private static final String ONLINE_TOPIC = "online";
     private static final String GROUP_ID = "payment";
 
-    private final AccountRepository accountRepository;
+    //    private final AccountRepository accountRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final PaymentGateAwayService paymentGateAwayService;
     private final ErrorLogService errorLogService;
+    private final AccountRepository accountRepository;
 
     public OnlinePaymentServiceImpl(AccountRepository accountRepository, PaymentRepository paymentRepository, PaymentMapper paymentMapper, PaymentGateAwayService paymentGateAwayService, ErrorLogService errorLogService) {
         this.accountRepository = accountRepository;
@@ -45,14 +46,16 @@ public class OnlinePaymentServiceImpl implements OnlinePaymentService {
 
         if (isPaymentValid(paymentJsonDTO)) {
             Payment payment = paymentMapper.mapPaymentJsonToPayment(paymentJsonDTO);
-            paymentRepository.save(payment);
+            try {
+                paymentRepository.save(payment);
+            } catch (Exception e) {
+                errorLogService.errorLog(ErrorJsonDTO.toModel(payment.getPaymentId(), ErrorType.DATABASE.getErrorType(),
+                        "Payment save error"));
+            }
             updateAccount(payment);
         } else {
-            ErrorJsonDTO dto = new ErrorJsonDTO();
-            dto.setPaymentId(paymentJsonDTO.getPaymentId());
-            dto.setError(ErrorType.NETWORK.getErrorType());
-            dto.setErrorDescription("Invalid Payment");
-            errorLogService.errorLog(dto);
+            errorLogService.errorLog(ErrorJsonDTO.toModel(paymentJsonDTO.getPaymentId(), ErrorType.NETWORK.getErrorType(),
+                    "Invalid Payment"));
         }
     }
 
@@ -69,16 +72,17 @@ public class OnlinePaymentServiceImpl implements OnlinePaymentService {
             Optional<Payment> paymentOptional = paymentRepository.findById(payment.getPaymentId());
             if (paymentOptional.isPresent())
                 updatedLastPaymentDate = paymentOptional.get().getCreatedOn();
-
             account.setLastPaymentDate(updatedLastPaymentDate);
-            accountRepository.save(account);
-            accountRepository.findById(account.getAccountId());
+
+            try {
+                accountRepository.save(account);
+            } catch (Exception e) {
+                errorLogService.errorLog(ErrorJsonDTO.toModel(payment.getPaymentId(), ErrorType.DATABASE.getErrorType(),
+                        "Account data base error"));
+            }
         } else {
-            ErrorJsonDTO dto = new ErrorJsonDTO();
-            dto.setPaymentId(payment.getPaymentId());
-            dto.setError(ErrorType.NETWORK.getErrorType());
-            dto.setErrorDescription("There is no account related with payment");
-            errorLogService.errorLog(dto);
+            errorLogService.errorLog(ErrorJsonDTO.toModel(payment.getPaymentId(), ErrorType.NETWORK.getErrorType(),
+                    "There is no account related with payment"));
         }
     }
 
