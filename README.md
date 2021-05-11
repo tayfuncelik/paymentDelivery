@@ -5,8 +5,9 @@
 _Provide a description of how to run/execute your program..._
 
 After run docker-compose up necessary environment will be ready to use 
-then we should execute 'mvn clean install ' and then 'mvn spring-boot:run' inside delivery/payment folder
-payment service will ready to listen kafka message events.
+1-execute 'mvn clean install ' and then 'mvn spring-boot:run' inside delivery/producer folder
+producer service will send online and offline events to Kafka.
+2-execute 'mvn clean install ' and then 'mvn spring-boot:run' inside delivery/payment
 
 I just tried to send few kafka message events using another module which is producer. 
 But I just kept it simple you may able to change and use it.
