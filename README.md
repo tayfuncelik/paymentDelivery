@@ -18,7 +18,7 @@ But I just kept it simple you may able to change and use it.
 
 _Some notes or explaination of your solution..._
 ```
-I designed this system offline and online seperately from entity layer to service layer.
+I designed this system offline and online separately from entity layer to service layer.
 I took event messages and converted to neccessary object using Object Mapper. If I got any error I just send it to 
 log system provider.
 
@@ -30,11 +30,12 @@ to logging system as a Database error but if there is any mapping problem it wil
 
 _If u have more time or want to improve somthing..._
 ```
+If we can we may able to divide domain and make them different microservice so we can easily scale them separately
 If more events will be handled Kafka Stream should be considered because of the big data process.
 CI/CD pipeline integration might be added.
 Logging monitoring could be implemented like KIBANA, Grafana ,LogStash ..
 Consumers might commit after process completed but for now I just configured default as auto commit this way 
 give us more latency but data consistency should be considered.
 All methods might be covered with test cases
-Repositories might be reached using Accound and payment service via interfaces and implp classes
+Repositories might be reached using Accound and payment service via interfaces and imply classes
 ```
